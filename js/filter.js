@@ -1,48 +1,53 @@
-// this script is for the filter & search functionality used in the gallery page
-const searchInput = document.getElementById("searchInput");
-const categoryFilter = document.getElementById("categoryFilter");
-const cards = document.querySelectorAll(".card");
-const resultsCount = document.getElementById("resultsCount");
+// js/filter.js — بحث وفلتر صفحة المعرض
 
-function addHighlight(text, searchText) { // to dynamically highlight search term in results
-    if (searchText === "") { // no highlight if search box is empty
-        return text;
-    }
+const searchInput    = document.getElementById('searchInput');
+const categoryFilter = document.getElementById('categoryFilter');
+const cards          = document.querySelectorAll('.place-card');
+const resultsCount   = document.getElementById('resultsCount');
+const noResults      = document.getElementById('noResults');
 
-    const regex = new RegExp(searchText, "gi"); // "g" means find all occurences of the searched term (not just the first one), "i" means case-insensitive
-    return text.replace(regex, "<mark>$&</mark>"); // $& represents the matched substring
+function addHighlight(text, term) {
+  if (!term) return text;
+  const regex = new RegExp(term, 'gi');
+  return text.replace(regex, '<mark>$&</mark>');
 }
 
 function filterCards() {
-    const searchText = searchInput.value.trim().toLowerCase();
-    const selectedType = categoryFilter.value;
-    let visibleCount = 0; // to count number of results after searching
+  const term    = searchInput.value.trim().toLowerCase();
+  const selType = categoryFilter.value;
+  let   visible = 0;
 
-    cards.forEach(card => {
-        const nameElement = card.querySelector("h1"); // selects <h1> element and its contents
-        const descriptionElement = card.querySelector("p"); // same with <p>
+  cards.forEach(card => {
+    const nameEl = card.querySelector('h2');
+    const descEl = card.querySelector('p');
 
-        nameElement.innerHTML = nameElement.textContent; // remove any elements inside <h1> (to remove previously placed <mark> elements)
-        descriptionElement.innerHTML = descriptionElement.textContent; // same thing with the <p> element
+    // إزالة هايلايت سابق
+    if (nameEl) nameEl.innerHTML = nameEl.textContent;
+    if (descEl) descEl.innerHTML = descEl.textContent;
 
-        const name = card.querySelector("h1").textContent.toLowerCase();
-        const description = card.querySelector("p").textContent.toLowerCase();
-        const type = card.dataset.type;
-        const matchesSearch = name.includes(searchText) || description.includes(searchText); // search returns all results that mention desired term
-        const matchesType = selectedType === "all" || type === selectedType;
+    const name = (card.dataset.name || '').toLowerCase();
+    const desc = (card.dataset.desc || '').toLowerCase();
+    const type =  card.dataset.type || '';
 
-        if (matchesSearch && matchesType) {
-            card.style.display = "block";
-            visibleCount++;
+    const matchSearch = !term || name.includes(term) || desc.includes(term);
+    const matchType   = selType === 'all' || type === selType;
 
-            nameElement.innerHTML = addHighlight(nameElement.textContent, searchText); // searches card name for matches and highlights them
-            descriptionElement.innerHTML = addHighlight(descriptionElement.textContent, searchText); // same with card description
-        } else {
-            card.style.display = "none";
-        }
-    });
-    resultsCount.textContent = `عدد النتائج: ${visibleCount}`;
+    if (matchSearch && matchType) {
+      card.style.display = 'block';
+      visible++;
+      if (nameEl && term) nameEl.innerHTML = addHighlight(nameEl.textContent, term);
+      if (descEl && term) descEl.innerHTML = addHighlight(descEl.textContent, term);
+    } else {
+      card.style.display = 'none';
+    }
+  });
+
+  if (resultsCount) resultsCount.textContent = `عدد النتائج: ${visible}`;
+  if (noResults)    noResults.style.display  = visible === 0 ? 'block' : 'none';
 }
 
-searchInput.addEventListener("input", filterCards); // runs when user types
-categoryFilter.addEventListener("change", filterCards); // runs when chosen option changes
+// تشغيل أولي
+filterCards();
+
+if (searchInput)    searchInput.addEventListener('input',  filterCards);
+if (categoryFilter) categoryFilter.addEventListener('change', filterCards);
