@@ -193,7 +193,7 @@ $types = array_unique(array_column($places, 'type'));
     <div class="gallery-grid" id="galleryGrid">
       <?php foreach ($places as $i => $place): ?>
         <a
-          href="details.php?id=<?= $place['id'] ?>"
+          href="/details.php?id=<?= $place['id'] ?>"
           class="place-card animate-fade-up delay-<?= min($i + 1, 6) ?>"
           data-type="<?= htmlspecialchars($place['type']) ?>"
           data-name="<?= htmlspecialchars($place['name']) ?>"

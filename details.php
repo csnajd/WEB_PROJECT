@@ -12,7 +12,7 @@ if (!$row) {
     include __DIR__ . '/includes/header.php';
     echo '<div class="container pt-nav" style="padding-top:120px;text-align:center;">
             <h2>المنطقة غير موجودة</h2>
-            <a href="gallery.php" class="btn btn-primary mt-3">العودة للمعرض</a>
+            <a href="/gallery.php" class="btn btn-primary mt-3" style="margin: 12px;">العودة للمعرض</a>
           </div>';
     include __DIR__ . '/includes/footer.php';
     exit;
@@ -28,6 +28,9 @@ $extras = array_values(array_filter([
     $row['extra_image2'],
     $row['extra_image3'],
 ]));
+
+ // المعلومات السريعة كقائمة
+$quick_info = array_filter(array_map('trim', explode('،', $row['quick_info'])));
 
 // المعالم كقائمة
 $landmarks = array_filter(array_map('trim', explode('،', $row['landmarks'])));
@@ -152,7 +155,7 @@ $landmarks = array_filter(array_map('trim', explode('،', $row['landmarks'])));
   color: var(--text-secondary);
 }
 .landmark-item:last-child { border-bottom: none; }
-.landmark-dot {
+.item-dot {
   width: 7px; height: 7px;
   background: var(--green-main);
   border-radius: 50%;
@@ -256,7 +259,7 @@ $landmarks = array_filter(array_map('trim', explode('،', $row['landmarks'])));
 <main class="details-body">
   <div class="container">
 
-    <a href="gallery.php" class="back-link">&#8592; العودة إلى معرض المناطق</a>
+    <a href="/gallery.php" class="back-link">&#8592; العودة إلى معرض المناطق</a>
 
     <div class="details-grid">
 
@@ -288,9 +291,9 @@ $landmarks = array_filter(array_map('trim', explode('،', $row['landmarks'])));
               <div class="slider-wrap">
                 <img id="sliderImage" class="slider-main-img" src="<?= htmlspecialchars($extras[0]) ?>" alt="">
                 <div class="slider-controls">
-                  <button class="slider-btn" onclick="prevImage()">&#8250;</button>
+                  <button class="slider-btn" onclick="prevImage()">&#8249;</button>
                   <span class="slider-counter" id="sliderCounter">1 / <?= count($extras) ?></span>
-                  <button class="slider-btn" onclick="nextImage()">&#8249;</button>
+                  <button class="slider-btn" onclick="nextImage()">&#8250;</button>
                 </div>
               </div>
             <?php endif; ?>
@@ -302,32 +305,24 @@ $landmarks = array_filter(array_map('trim', explode('،', $row['landmarks'])));
       <!-- الشريط الجانبي -->
       <div class="details-sidebar">
 
-        <div class="quick-info-card animate-fade-up delay-1">
-          <h4>معلومات سريعة</h4>
-          <div class="quick-item">
-            <span class="qi-icon">📍</span>
-            <span>الموقع: <?= htmlspecialchars($row['type']) ?></span>
+        <?php if (!empty($quick_info)): ?>
+          <div class="quick-info-card animate-fade-up delay-1">
+            <h4>معلومات سريعة</h4>
+            <?php foreach ($quick_info as $qi): ?>
+              <div class="quick-item">
+                <span class="item-dot"></span>
+                <span><?= htmlspecialchars(trim($qi)) ?></span>
+              </div>
+            <?php endforeach; ?>
           </div>
-          <div class="quick-item">
-            <span class="qi-icon">🚗</span>
-            <span>أفضل المسارات: الأماكن السياحية والتراثية</span>
-          </div>
-          <div class="quick-item">
-            <span class="qi-icon">📅</span>
-            <span>أفضل وقت للزيارة: الربيع والشتاء</span>
-          </div>
-          <div class="quick-item">
-            <span class="qi-icon">🍽️</span>
-            <span>أشهر الأطعمة: المطاعم والمقاهي المحلية</span>
-          </div>
-        </div>
+        <?php endif; ?>
 
         <?php if (!empty($landmarks)): ?>
           <div class="landmarks-card animate-fade-up delay-2">
             <h4>أبرز المعالم</h4>
             <?php foreach ($landmarks as $lm): ?>
               <div class="landmark-item">
-                <span class="landmark-dot"></span>
+                <span class="item-dot"></span>
                 <span><?= htmlspecialchars(trim($lm)) ?></span>
               </div>
             <?php endforeach; ?>
@@ -343,7 +338,7 @@ $landmarks = array_filter(array_map('trim', explode('،', $row['landmarks'])));
 <!-- سكريبت السلايدر -->
 <?php if (count($extras) > 1): ?>
 <script>
-  const _images = <?= json_encode($extras) ?>;
+  const _images = <?= json_encode($extras) ?>; // json_encode turns php $images array into a js array
   let _idx = 0;
   function nextImage() {
     _idx = (_idx + 1) % _images.length;

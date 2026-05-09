@@ -110,7 +110,7 @@ include __DIR__ . '/includes/header.php';
             المعالم التاريخية والثقافية. اختر منطقة من المعرض للانتقال إلى
             صفحة التفاصيل.
           </p>
-          <a href="gallery.php" class="btn btn-primary" style="align-self:flex-start;">ابدأ الاستكشاف</a>
+          <a href="/gallery.php" class="btn btn-primary" style="align-self:flex-start;">ابدأ الاستكشاف</a>
         </div>
 
         <div class="hero-green-card animate-fade-up delay-2">
