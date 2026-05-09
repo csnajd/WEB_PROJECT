@@ -226,5 +226,5 @@ $types = array_unique(array_column($places, 'type'));
   <div class="footer-simple">© اكتشف السعودية — جامعة الملك سعود</div>
 </main>
 
-<script src="/WEB_PROJECT/js/filter.js"></script>
+<script src="/js/filter.js"></script>
 <?php include __DIR__ . '/includes/footer.php'; ?>
